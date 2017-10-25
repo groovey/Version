@@ -1,1 +1,69 @@
-#  Outdated
+# Migration
+
+Groovey Version Package
+
+## Usage
+
+    $ groovey version:up
+
+## Installation
+
+    $ composer require groovey/version
+
+## Folder Location
+
+    ./vendor/groovey/framework/database/versions/
+
+## Setup
+
+```php
+#!/usr/bin/env php
+<?php
+
+set_time_limit(0);
+
+require_once __DIR__.'/vendor/autoload.php';
+
+use Silex\Application;
+use Groovey\Console\Providers\ConsoleServiceProvider;
+use Groovey\DB\Providers\DBServiceProvider;
+
+$app = new Application();
+
+$app->register(new ConsoleServiceProvider(), [
+        'console.name'    => 'Groovey',
+        'console.version' => '1.0.0',
+    ]);
+
+$app->register(new DBServiceProvider(), [
+        'db.connection' => [
+            'host'      => 'localhost',
+            'driver'    => 'mysql',
+            'database'  => 'test_version',
+            'username'  => 'root',
+            'password'  => '',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'logging'   => true,
+        ],
+    ]);
+
+$console = $app['console'];
+
+$console->addCommands([
+        new Groovey\Version\Commands\About(),
+        new Groovey\Version\Commands\Init($app),
+        new Groovey\Version\Commands\Reset($app),
+        new Groovey\Version\Commands\Drop($app),
+        new Groovey\Version\Commands\Listing($app),
+        new Groovey\Version\Commands\Status($app),
+        new Groovey\Version\Commands\Up($app),
+        new Groovey\Version\Commands\Down($app),
+        new Groovey\Version\Commands\Create($app),
+    ]);
+
+$status = $console->run();
+
+exit($status);
+```
